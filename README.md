@@ -15,13 +15,13 @@ rak-rs = "0.3.3"
 
 ## Features
 
-This RakNet implementation comes with 3 primary features, `async_std`, `async_tokio` and `mcpe`.  However, by default, only `async_std` is enabled, and `mcpe` requires you to modify your `Cargo.toml`.
+This RakNet implementation comes with 2 primary features, `async_std`, `async_tokio`.  However, by default, only `async_std` is enabled.
 
 If you wish to use these features, add them to your `Cargo.toml` as seen below:
 
 ```toml
 [dependencies]
-rak-rs = { version = "0.3.3", default-features = false, features = [ "async_tokio", "mcpe" ] }
+rak-rs = { version = "0.3.3", default-features = false, features = [ "async_tokio" ] }
 ```
 
 
@@ -41,7 +41,7 @@ The `client` module provides a way for you to interact with RakNet servers with 
 
 **Example:**
 
-```rust
+```rust ignore
 use rak_rs::client::{Client, DEFAULT_MTU};
 use std::net::ToSocketAddrs;
 
@@ -70,7 +70,7 @@ A RakNet server implementation in pure rust.
 
 **Example:**
 
-```rust
+```rust ignore
 use rakrs::connection::Connection;
 use rakrs::Listener;
 use rakrs::

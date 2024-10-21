@@ -96,9 +96,6 @@ use crate::{
     server::{current_epoch, PossiblySocketAddr},
 };
 
-#[cfg(feature = "mcpe")]
-use crate::protocol::mcpe::UnconnectedPong;
-#[cfg(not(feature = "mcpe"))]
 use crate::protocol::packet::offline::UnconnectedPong;
 
 pub const DEFAULT_MTU: u16 = 1400;

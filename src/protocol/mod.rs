@@ -34,15 +34,7 @@ pub(crate) mod ack;
 pub mod frame;
 /// This is the constant added to all offline packets to identify them as RakNet packets.
 pub(crate) mod magic;
-/// This module contains the MCPE specific packets that are used within RakNet, this is guarded
-/// under the `mcpe` feature.
-///
-/// To enable this feature, add the following to your `Cargo.toml`:
-/// ```toml
-/// [dependencies]
-/// rak-rs = { version = "0.1.0", features = [ "mcpe" ] }
-/// ```
-pub mod mcpe;
+
 pub mod packet;
 pub mod reliability;
 

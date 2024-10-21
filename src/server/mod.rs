@@ -39,7 +39,6 @@ use tokio::{
 use crate::connection::{ConnMeta, Connection};
 use crate::error::server::ServerError;
 use crate::notify::Notify;
-use crate::protocol::mcpe::motd::Motd;
 use crate::protocol::packet::offline::{
     IncompatibleProtocolVersion, OfflinePacket, OpenConnectReply, SessionInfoReply, UnconnectedPong,
 };
@@ -215,10 +214,6 @@ impl std::fmt::Display for PossiblySocketAddr<'_> {
 /// }
 /// ```
 pub struct Listener {
-    /// If mcpe is true, this is the default MOTD, this is
-    /// the default MOTD to send to the client. You can change this later by setting
-    /// a motd in the `Conn` struct.
-    pub motd: Motd,
     /// A server Id, passed in unconnected pong.
     pub id: u64,
     /// Supported versions
@@ -281,7 +276,6 @@ impl Listener {
         rakrs_debug!(true, "listener: Bound to {}", address);
 
         let server_id: u64 = rand::random();
-        let motd = Motd::new(server_id, format!("{}", address.port()));
 
         // This channel is a Communication channel for when `Connection` structs are initialized.
         let (send_comm, recv_comm) = bounded::<Connection>(10);
@@ -295,7 +289,6 @@ impl Listener {
             sock: Some(Arc::new(sock)),
             id: server_id,
             versions: &[10, 11],
-            motd,
             send_comm,
             recv_comm,
             // send_evnt,
@@ -336,8 +329,6 @@ impl Listener {
         let send_comm = self.send_comm.clone();
         // let send_evt = self.send_evnt.clone();
         let server_id = self.id.clone();
-        #[cfg(feature = "mcpe")]
-        let default_motd = self.motd.clone();
         let connections = self.connections.clone();
         let closer = self.closed.clone();
         let connections2 = self.connections.clone();
@@ -355,8 +346,7 @@ impl Listener {
         task::spawn(async move {
             // We allocate here to prevent constant allocation of this array
             let mut buf: [u8; 2048] = [0; 2048];
-            #[cfg(feature = "mcpe")]
-            let motd_default = default_motd.clone();
+
             loop {
                 let length: usize;
                 let origin: SocketAddr;
@@ -390,8 +380,6 @@ impl Listener {
                                 OfflinePacket::UnconnectedPing(_) => {
                                     // let (resp_tx, resp_rx) =
                                     //     oneshot::channel::<ServerEventResponse>();
-                                    #[cfg(feature = "mcpe")]
-                                    let motd: Motd = motd_default.clone();
 
                                     // if let Err(e) = send_evt.try_send((
                                     //         ServerEvent::RefreshMotdRequest(origin, motd.clone()),
@@ -422,13 +410,11 @@ impl Listener {
                                     //     // };
                                     // }
 
-                                    // unconnected pong signature is different if MCPE is specified.
                                     let resp = UnconnectedPong {
                                         timestamp: current_epoch(),
                                         server_id,
                                         magic: Magic::new(),
-                                        #[cfg(feature = "mcpe")]
-                                        motd,
+                                        metadata: "Bruh".to_owned()
                                     };
 
                                     send_packet_to_socket(&socket, resp.into(), origin).await;

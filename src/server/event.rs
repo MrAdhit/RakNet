@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use crate::{connection::state::ConnectionState, protocol::mcpe::motd::Motd};
+use crate::connection::state::ConnectionState;
 
 #[derive(Debug, Clone)]
 pub enum ServerEvent {
@@ -8,7 +8,7 @@ pub enum ServerEvent {
     /// the second value in this tuple represents
     /// the `Motd` that will be used if the event is
     /// disregarded.
-    RefreshMotdRequest(SocketAddr, Motd),
+    RefreshMotdRequest(SocketAddr, String),
     /// Requests the client to update their mtu size.
     /// This event is dispatched before the client fully connects
     /// allowing you to control the MtuSize.
@@ -26,7 +26,7 @@ pub enum ServerEvent {
 #[derive(Debug, Clone)]
 pub enum ServerEventResponse {
     /// The response to a `RefreshMotdRequest`.
-    RefreshMotd(Motd),
+    RefreshMotd(String),
     /// A generic response that acknowledges the event was recieved, but
     /// no actions were taken.
     ///

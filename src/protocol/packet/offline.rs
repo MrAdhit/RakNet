@@ -13,8 +13,6 @@
 use std::net::SocketAddr;
 
 use super::RakPacket;
-#[cfg(feature = "mcpe")]
-pub use crate::protocol::mcpe::UnconnectedPong;
 use crate::protocol::Magic;
 use crate::protocol::RAKNET_HEADER_FRAME_OVERHEAD;
 use crate::register_packets;
@@ -67,50 +65,13 @@ pub struct UnconnectedPing {
 /// This is used to determine the latency between the client and the server, and to determine
 /// that the peer is online.
 ///
-/// <style>
-/// .warning-2 {
-///     background: rgba(255,240,76,0.34) !important;
-///     padding: 0.75em;
-///     border-left: 2px solid #fce811;
-///     font-family: "Source Serif 4", NanumBarunGothic, serif;
-///  }
-///
-/// .warning-2 code {
-///     background: rgba(211,201,88,0.64) !important;
-/// }
-///
-/// .notice-2 {
-///     background: rgba(88, 211, 255, 0.34) !important;
-///     padding: 0.75em;
-///     border-left: 2px solid #4c96ff;
-///     font-family: "Source Serif 4", NanumBarunGothic, serif;
-/// }
-///
-/// .notice-2 code {
-///     background: rgba(88, 211, 255, 0.64) !important;
-/// }
-/// </style>
-/// <div class="notice-2">
-///     <strong> Note: </strong>
-///    <p>
-///         If the client is a Minecraft: Bedrock Edition client, this packet is not sent
-///         and the
-///         <a
-///             href="/rak-rs/latest/protocol/mcpe/struct.UnconnectedPong.html"
-///             title="struct rak_rs::protocol::mcpe::UnconnectedPing">
-///             UnconnectedPong
-///         </a>
-///         from the <code>mcpe</code> module is sent instead.
-///   </p>
-/// </div>
-///
 /// [`UnconnectedPong`]: crate::protocol::packet::offline::UnconnectedPong
-#[cfg(not(feature = "mcpe"))]
 #[derive(Debug, Clone, BinaryIo)]
 pub struct UnconnectedPong {
     pub timestamp: u64,
     pub server_id: u64,
     pub magic: Magic,
+    pub metadata: String,
 }
 
 /// This packet is the equivelant of the `OpenConnectRequest` packet in RakNet.
